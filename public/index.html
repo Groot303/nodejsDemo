@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="regApp">
+        <!-- <form action="http://127.0.0.1:3000/api/reg" method="post" onsubmit="return false"> -->
+        <label for="regUser">账号：</label>
+        <input id="regUser" type="text" name="userName">
+        <label for="regPassword">密码：</label>
+        <input id="regPassword" type="text" name="password">
+        <button class="regBtn" type="submit">注册</button>
+
+        <!-- </form> -->
+    </div>
+    <hr>
+    <div id="loginApp">
+        <form action="http://127.0.0.1:3000/api/login" method="post" onsubmit="return false">
+            <label for="user">账号</label>
+            <input id="loginUser" type="text" name="userName">
+            <label for="password">密码</label>
+            <input id="loginPassword" type="text" name="password">
+            <button class="loginBtn" type="submit">登录</button>
+
+        </form>
+    </div>
+
+    <hr>
+    <div id="accountApp">
+        我的账单：
+        <div class="listContain">
+            <div class="item">事项</div>
+            <div class="time">时间</div>
+            <div class="type">类型</div>
+            <div class="account">金额</div>
+            <button class="addAccountBtn">添加账单</button>
+        </div>
+    </div>
+
+    <hr>
+    <div id="addAccountApp">
+        <form action="http://127.0.0.1:3000/api/login" method="post">
+            <label for="_item">事项：</label>
+            <input id="_item" type="text" name="title"> <br>
+            <label for="_time">时间：</label>
+            <input id="_time" type="text" name="time"> <br>
+            <label for="_type">类型：</label>
+            <input id="_type" type="text"> <br>
+            <label for="_account">金额：</label>
+            <input id="_account" type="text" name="account"> <br>
+            <label for="_remarks">备注：</label>
+            <textarea name="remarks" id="_remarks" cols="30" rows="10"></textarea>
+            <button class="addBtn">添加</button>
+        </form>
+
+    </div>
+    <hr>
+    <div id="heroApp">
+        <button class="getHero">获取英雄列表</button>
+    </div>
+    <script>
+        const baseUrl = "http://127.0.0.1:3000"
+        async function init() {
+            let resHeader = await fetch(`${baseUrl}/api/account`)
+            let resData = await resHeader.text()
+            console.log(resData)
+        }
+        init()
+
+        const regBtn = document.getElementsByClassName('regBtn')[0]
+        const regUserVal = document.getElementById('regUser')
+        const regPasswordVal = document.getElementById('regPassword')
+
+        regBtn.addEventListener('click', async () => {
+            let payload = {
+                userName: regUserVal.value,
+                password: regPasswordVal.value
+            }
+            fetch("http://127.0.0.1:3000/api/reg", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+        })
+
+        // 登录功能
+        const loginBtn = document.getElementsByClassName('loginBtn')[0]
+        const loginUser = document.getElementById('loginUser')
+        const loginPassword = document.getElementById('loginPassword')
+
+        loginBtn.addEventListener('click', async () => {
+            let payload = `userName=${loginUser.value}&password=${loginPassword.value}`
+            fetch("http://127.0.0.1:3000/api/login", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: payload
+            })
+        })
+
+        const getHeroBtn = document.getElementsByClassName('getHero')[0]
+        getHeroBtn.addEventListener('click', async () => {
+            let resH = await fetch(`${baseUrl}/api/heroList`, {
+                credentials: 'include'
+            })
+            let resData = await resH.text()
+            let { data } = JSON.parse(resData)
+
+            for (let i of data.hero) {
+                let heroList = document.createElement("div")
+                heroList.className = 'hero'
+
+                let textNode = document.createTextNode(`${i.title}`)
+                heroList.appendChild(textNode)
+
+                document.body.appendChild(heroList)
+            }
+
+        })
+    </script>
+</body>
+
+</html>
